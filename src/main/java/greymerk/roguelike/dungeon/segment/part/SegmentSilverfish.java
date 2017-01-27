@@ -2,6 +2,7 @@ package greymerk.roguelike.dungeon.segment.part;
 
 import java.util.Random;
 
+import greymerk.roguelike.config.RogueConfig;
 import greymerk.roguelike.dungeon.IDungeonLevel;
 import greymerk.roguelike.dungeon.segment.IAlcove;
 import greymerk.roguelike.dungeon.segment.alcove.SilverfishNest;
@@ -62,10 +63,12 @@ public class SegmentSilverfish extends SegmentBase {
 		stair.setOrientation(Cardinal.reverse(dir), true);
 		stair.set(editor, cursor);
 		
-		IAlcove nest = new SilverfishNest();
-		if(nest.isValidLocation(editor, new Coord(origin), dir)){
-			nest.generate(editor, rand, level.getSettings(), new Coord(origin), dir);
-			return;
+		if(RogueConfig.getBoolean(RogueConfig.SILVERFISH)){
+			IAlcove nest = new SilverfishNest();
+			if(nest.isValidLocation(editor, new Coord(origin), dir)){
+				nest.generate(editor, rand, level.getSettings(), new Coord(origin), dir);
+				return;
+			}
 		}
 	}	
 }
