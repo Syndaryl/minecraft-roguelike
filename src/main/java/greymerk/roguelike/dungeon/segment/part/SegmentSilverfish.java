@@ -67,8 +67,11 @@ public class SegmentSilverfish extends SegmentBase {
 			IAlcove nest = new SilverfishNest();
 			if(nest.isValidLocation(editor, new Coord(origin), dir)){
 				nest.generate(editor, rand, level.getSettings(), new Coord(origin), dir);
-				return;
 			}
 		}
+		else {
+			//RectSolid.fill(editor, rand, start, end, theme.getPrimaryWall(), false, true);
+		}
+		return;
 	}	
 }
