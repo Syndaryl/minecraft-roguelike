@@ -10,7 +10,6 @@ import greymerk.roguelike.worldgen.Coord;
 import greymerk.roguelike.worldgen.IBlockFactory;
 import greymerk.roguelike.worldgen.IStair;
 import greymerk.roguelike.worldgen.IWorldEditor;
-import greymerk.roguelike.worldgen.blocks.BlockType;
 import greymerk.roguelike.worldgen.shapes.RectHollow;
 import greymerk.roguelike.worldgen.shapes.RectSolid;
 
@@ -21,10 +20,10 @@ public class DungeonLinkerTop extends DungeonBase{
 		
 		ITheme theme = settings.getTheme();
 		
-		IBlockFactory pillar = theme.getPrimaryPillar();
-		IBlockFactory wall = theme.getPrimaryWall();
-		IBlockFactory floor = theme.getPrimaryFloor();
-		IStair stair = theme.getPrimaryStair();
+		IBlockFactory pillar = theme.getPrimary().getPillar();
+		IBlockFactory wall = theme.getPrimary().getWall();
+		IBlockFactory floor = theme.getPrimary().getFloor();
+		IStair stair = theme.getPrimary().getStair();
 		
 		Coord start;
 		Coord end;
@@ -38,7 +37,7 @@ public class DungeonLinkerTop extends DungeonBase{
 		
 		cursor = new Coord(origin);
 		cursor.add(Cardinal.UP, 5);
-		BlockType.get(BlockType.GLOWSTONE).set(editor, cursor);
+		settings.getTheme().getPrimary().getLightBlock().set(editor, rand, cursor);
 		
 		start = new Coord(origin);
 		end = new Coord(origin);

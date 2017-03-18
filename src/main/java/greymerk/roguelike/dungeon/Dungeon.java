@@ -1,20 +1,27 @@
 package greymerk.roguelike.dungeon;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 import greymerk.roguelike.Roguelike;
 import greymerk.roguelike.config.RogueConfig;
 import greymerk.roguelike.dungeon.settings.ISettings;
+import greymerk.roguelike.dungeon.settings.SettingsContainer;
 import greymerk.roguelike.dungeon.settings.SettingsResolver;
 import greymerk.roguelike.dungeon.settings.SpawnCriteria;
 import greymerk.roguelike.treasure.ITreasureChest;
 import greymerk.roguelike.treasure.Treasure;
 import greymerk.roguelike.treasure.TreasureManager;
 import greymerk.roguelike.treasure.loot.Book;
-import greymerk.roguelike.treasure.loot.ILoot;
-import greymerk.roguelike.treasure.loot.Loot;
 import greymerk.roguelike.util.WeightedChoice;
 import greymerk.roguelike.worldgen.Cardinal;
 import greymerk.roguelike.worldgen.Coord;
@@ -30,7 +37,7 @@ import net.minecraftforge.common.BiomeDictionary.Type;
 
 public class Dungeon implements IDungeon{
 		
-	
+	private static final String SETTINGS_DIRECTORY = RogueConfig.configDirName + "/settings";
 	public static SettingsResolver settingsResolver;
 	
 	private DungeonGenerator generator;
@@ -38,11 +45,44 @@ public class Dungeon implements IDungeon{
 	private IWorldEditor editor;
 	
 	static{
-		initResolver();
+		try{
+			RogueConfig.reload(false);
+			initResolver();
+		} catch(Exception e) {
+			// do nothing
+		}
 	}
 	
-	public static void initResolver(){
-		settingsResolver = new SettingsResolver();
+	public static void initResolver() throws Exception{
+		File settingsDir = new File(SETTINGS_DIRECTORY);
+		
+		if(settingsDir.exists() && !settingsDir.isDirectory()){
+			throw new Exception("Settings directory is a file");
+		}
+		
+		if(!settingsDir.exists()){
+			settingsDir.mkdir();
+		}
+		
+		File[] settingsFiles = settingsDir.listFiles();
+		Arrays.sort(settingsFiles);
+		
+		SettingsContainer settings = new SettingsContainer();
+		settingsResolver = new SettingsResolver(settings);
+		
+		Map<String, String> files = new HashMap<String, String>();
+		
+		for(File file : Arrays.asList(settingsFiles)){
+			try {
+				String content = Files.toString(file, Charsets.UTF_8);
+				files.put(file.getName(), content); 
+			} catch (IOException e) {				
+				throw new Exception("Error reading file : " + file.getName());
+			}
+		}
+
+		settings.parseCustomSettings(files);
+				
 	}
 		
 	
@@ -52,6 +92,8 @@ public class Dungeon implements IDungeon{
 	}
 	
 	public void generateNear(Random rand, int x, int z){
+		if(Dungeon.settingsResolver == null) return;
+		
 		int attempts = 50;
 		
 		for(int i = 0;i < attempts;i++){
@@ -59,7 +101,14 @@ public class Dungeon implements IDungeon{
 			
 			if(!validLocation(rand, location.getX(), location.getZ())) continue;
 			
-			ISettings setting = settingsResolver.getSettings(editor, rand, location);
+			ISettings setting;
+			
+			try{
+				setting = Dungeon.settingsResolver.getSettings(editor, rand, location);	
+			} catch(Exception e){
+				return;
+			}
+			 
 			
 			if(setting == null) return;
 			
@@ -74,9 +123,8 @@ public class Dungeon implements IDungeon{
 
 		Random rand = getRandom(editor, this.pos.getX(), this.pos.getZ());
 		TreasureManager treasure = editor.getTreasure();
-		ILoot loot = Loot.getLoot();
 
-		settings.getLootRules().process(rand, loot, treasure);
+		settings.getLootRules().process(rand, treasure);
 		 // TODO: Change start book details
 		Book book = new Book("Greymerk", "Statistics");
 		book.addPage("~Architect's Resource Notes~\n\n"

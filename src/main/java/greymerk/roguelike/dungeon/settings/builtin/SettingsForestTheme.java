@@ -8,6 +8,8 @@ import greymerk.roguelike.dungeon.base.DungeonRoom;
 import greymerk.roguelike.dungeon.base.SecretFactory;
 import greymerk.roguelike.dungeon.settings.DungeonSettings;
 import greymerk.roguelike.dungeon.settings.LevelSettings;
+import greymerk.roguelike.dungeon.settings.SettingIdentifier;
+import greymerk.roguelike.dungeon.settings.SettingsContainer;
 import greymerk.roguelike.dungeon.settings.SpawnCriteria;
 import greymerk.roguelike.dungeon.settings.TowerSettings;
 import greymerk.roguelike.dungeon.towers.Tower;
@@ -16,7 +18,12 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public class SettingsForestTheme extends DungeonSettings{
 	
+	public static final SettingIdentifier ID = new SettingIdentifier(SettingsContainer.BUILTIN_NAMESPACE, "forest");
+	
 	public SettingsForestTheme(){
+		
+		this.id = ID;
+		this.inherit.add(SettingsBase.ID);
 		
 		this.criteria = new SpawnCriteria();
 		List<BiomeDictionary.Type> biomes = new ArrayList<BiomeDictionary.Type>();
@@ -33,7 +40,6 @@ public class SettingsForestTheme extends DungeonSettings{
 			
 			switch(i){
 			case 0:
-				secrets.addRoom(DungeonRoom.BEDROOM);
 				secrets.addRoom(DungeonRoom.SMITH);
 				break;
 			case 1:

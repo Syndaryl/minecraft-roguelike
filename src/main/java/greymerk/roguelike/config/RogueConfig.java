@@ -11,7 +11,7 @@ import net.minecraft.util.Tuple;
 public enum RogueConfig {
 
 	DONATURALSPAWN, LEVELRANGE, LEVELMAXROOMS, LEVELSCATTER, SPAWNFREQUENCY, GENEROUS, MOBDROPS, DIMENSIONWL, DIMENSIONBL, 
-	PRECIOUSBLOCKS, LOOTING, DONOVELTYSPAWN, UPPERLIMIT, LOWERLIMIT, ROGUESPAWNERS, ENCASE, FURNITURE, SILVERFISH;
+	PRECIOUSBLOCKS, LOOTING, DONOVELTYSPAWN, UPPERLIMIT, LOWERLIMIT, ROGUESPAWNERS, ENCASE, FURNITURE, SILVERFISH, RANDOM;
 	
 	public static final String configDirName = "config/roguelike_dungeons";
 	public static final String configFileName = "roguelike.cfg";
@@ -38,6 +38,7 @@ public enum RogueConfig {
 		case ENCASE: return "encase";
 		case FURNITURE: return "furniture";
 		case SILVERFISH: return "silverfish";
+		case RANDOM: return "random";
 		default: return null;
 		}
 	}
@@ -65,6 +66,7 @@ public enum RogueConfig {
 		case ENCASE: return new Tuple<String, Boolean>(getName(option), false);
 		case FURNITURE: return new Tuple<String, Boolean>(getName(option), true);
 		case SILVERFISH: return new Tuple<String, Boolean>(getName(option), true);
+		case RANDOM: return new Tuple<String, Boolean>(getName(option), false);
 		default: return null;
 		}
 	}
@@ -88,6 +90,7 @@ public enum RogueConfig {
 		if(!instance.ContainsKey(getName(ENCASE))) setBoolean(ENCASE, (Boolean)getDefault(ENCASE).getSecond());
 		if(!instance.ContainsKey(getName(FURNITURE))) setBoolean(FURNITURE, (Boolean)getDefault(FURNITURE).getSecond());
 		if(!instance.ContainsKey(getName(SILVERFISH))) setBoolean(SILVERFISH, (Boolean)getDefault(SILVERFISH).getSecond());
+		if(!instance.ContainsKey(getName(RANDOM))) setBoolean(RANDOM, (Boolean)getDefault(RANDOM).getSecond());
 	}
 	
 	public static double getDouble(RogueConfig option){

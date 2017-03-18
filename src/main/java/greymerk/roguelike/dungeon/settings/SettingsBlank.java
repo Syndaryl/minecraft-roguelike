@@ -6,9 +6,10 @@ import greymerk.roguelike.treasure.loot.LootRuleManager;
 
 public class SettingsBlank extends DungeonSettings{
 	
+	public static final SettingIdentifier ID = new SettingIdentifier(SettingsContainer.BUILTIN_NAMESPACE, "blank");
+	
 	public SettingsBlank(){
-		this.depth = DungeonSettings.MAX_NUM_LEVELS;
-		
+		this.id = ID;
 		levels = new HashMap<Integer, LevelSettings>();
 		this.lootRules = new LootRuleManager();
 	}

@@ -1,5 +1,7 @@
 package greymerk.roguelike.dungeon.towers;
 
+import java.util.Random;
+
 import greymerk.roguelike.worldgen.Cardinal;
 import greymerk.roguelike.worldgen.Coord;
 import greymerk.roguelike.worldgen.IWorldEditor;
@@ -45,5 +47,22 @@ public enum Tower {
 		return new Coord(pos.getX(), pos.getY() + yOffset, pos.getZ());
 	}
 
+	public static Tower get(String name) throws Exception{
+		if(!contains(name.toUpperCase())){
+			throw new Exception("No such tower type: " + name);
+		}
+		
+		return valueOf(name.toUpperCase());
+	}
 	
+	public static boolean contains(String name){
+		for(Tower value : Tower.values()){
+			if(value.toString().equals(name)) return true;
+		}
+		return false;
+	}
+
+	public static Tower getRandom(Random rand) {
+		return Tower.values()[rand.nextInt(Tower.values().length)];
+	}
 }

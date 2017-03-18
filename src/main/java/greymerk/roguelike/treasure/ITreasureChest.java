@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 
 public interface ITreasureChest {
 		
-	public ITreasureChest generate(IWorldEditor editor, Random rand, Coord pos, int level, boolean trapped);
+	public ITreasureChest generate(IWorldEditor editor, Random rand, Coord pos, int level, boolean trapped) throws ChestPlacementException;
 	
 	public boolean setSlot(int slot, ItemStack item);
 	
@@ -21,4 +21,5 @@ public interface ITreasureChest {
 	public int getSize();
 	
 	public int getLevel();
+
 }

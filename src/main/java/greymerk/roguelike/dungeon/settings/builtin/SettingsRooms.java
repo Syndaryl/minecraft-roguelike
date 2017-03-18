@@ -3,11 +3,18 @@ package greymerk.roguelike.dungeon.settings.builtin;
 import greymerk.roguelike.dungeon.base.DungeonFactory;
 import greymerk.roguelike.dungeon.base.DungeonRoom;
 import greymerk.roguelike.dungeon.settings.LevelSettings;
+import greymerk.roguelike.dungeon.settings.SettingIdentifier;
+import greymerk.roguelike.dungeon.settings.SettingsContainer;
 import greymerk.roguelike.dungeon.settings.DungeonSettings;
 
 public class SettingsRooms extends DungeonSettings{
 
+	public static final SettingIdentifier ID = new SettingIdentifier(SettingsContainer.BUILTIN_NAMESPACE, "rooms");
+	
 	public SettingsRooms(){
+		
+		this.id = ID;
+		
 		for(int i = 0; i < 5; ++i){
 			
 			DungeonFactory factory;
@@ -56,7 +63,7 @@ public class SettingsRooms extends DungeonSettings{
 				factory.addSingle(DungeonRoom.PRISON);
 				factory.addSingle(DungeonRoom.DARKHALL);
 				factory.addSingle(DungeonRoom.NETHERFORT);
-				factory.addRandom(DungeonRoom.CORNER, 10);
+				factory.addRandom(DungeonRoom.SLIME, 10);
 				factory.addRandom(DungeonRoom.BLAZE, 3);
 				factory.addRandom(DungeonRoom.NETHER, 3);
 				factory.addRandom(DungeonRoom.SPIDER, 2);

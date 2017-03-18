@@ -50,7 +50,7 @@ public class CommandSpawnDungeon extends CommandBase
 		ArgumentParser ap = new ArgumentParser(args);
 		
 		if(!ap.hasEntry(0)){
-			sender.sendMessage(new TextComponentString(TextFormat.apply("Usage: roguelike [dungeon | give | config]", TextFormat.GRAY)));
+			sender.sendMessage(new TextComponentString(TextFormat.apply("Usage: roguelike [dungeon | give | config | settings]", TextFormat.GRAY)));
 			return;
 		}
 		
@@ -103,8 +103,16 @@ public class CommandSpawnDungeon extends CommandBase
 				return;
 			}
 			if(ap.match(1, "reload")){
-				Dungeon.initResolver();
-				sender.sendMessage(new TextComponentString(TextFormat.apply("Success: Settings Reloaded", TextFormat.GREEN)));
+				try{
+					Dungeon.initResolver();
+					sender.sendMessage(new TextComponentString(TextFormat.apply("Success: Settings Reloaded", TextFormat.GREEN)));
+				} catch(Exception e) {
+					if(e.getMessage() == null){
+						sender.sendMessage(new TextComponentString(TextFormat.apply("Failure: Uncaught Exception", TextFormat.RED)));
+					} else {
+						sender.sendMessage(new TextComponentString(TextFormat.apply("Failure: " + e.getMessage(), TextFormat.RED)));	
+					}
+				}
 				return;
 			}
 			if(ap.match(1, "list")){
@@ -145,7 +153,6 @@ public class CommandSpawnDungeon extends CommandBase
 				sender.sendMessage(new TextComponentString(TextFormat.apply("Usage: roguelike dungeon {X Z | here} [setting]", TextFormat.GRAY)));
 				return;
 			}
-			
 
 			int x;
 			int z;
@@ -234,9 +241,24 @@ public class CommandSpawnDungeon extends CommandBase
 			IWorldEditor editor = new WorldEditor(world);
 			
 			if(settingName != null){
-				Dungeon.initResolver();
-				ISettings settings = Dungeon.settingsResolver.getWithDefault(settingName);
-				 
+				try{
+					Dungeon.initResolver();
+				} catch(Exception e) {
+					sender.sendMessage(new TextComponentString(TextFormat.apply("Failure: " + e.getMessage(), TextFormat.RED)));
+					return;
+				}
+				
+				Random rand = Dungeon.getRandom(editor, x, z);
+				ISettings settings = null; 
+						
+				try{
+					settings = Dungeon.settingsResolver.getWithName(settingName, editor, rand, new Coord(x, 0, z));	
+				} catch(Exception e) {
+					sender.sendMessage(new TextComponentString(TextFormat.apply("Failure: " + e.getMessage(), TextFormat.RED)));
+					return;
+				}
+				
+				
 				if(settings == null){
 					sender.sendMessage(new TextComponentString(TextFormat.apply("Failed: " + settingName + " not found.", TextFormat.RED)));
 					return;
@@ -253,7 +275,15 @@ public class CommandSpawnDungeon extends CommandBase
 			}
 			
 			Random rand = Dungeon.getRandom(editor, x, z);
-			ISettings settings = Dungeon.settingsResolver.getSettings(editor, rand, new Coord(x, 0, z));
+			
+			ISettings settings = null; 
+					
+			try{
+				settings = Dungeon.settingsResolver.getSettings(editor, rand, new Coord(x, 0, z));
+			} catch(Exception e){
+				sender.sendMessage(new TextComponentString(TextFormat.apply("Failure: " + e.getMessage(), TextFormat.RED)));
+			}
+			
 			if(settings != null){
 				IDungeon dungeon = new Dungeon(editor);
 				dungeon.generate(settings, x, z);
