@@ -13,6 +13,7 @@ import greymerk.roguelike.dungeon.settings.ISettings;
 import greymerk.roguelike.treasure.loot.provider.ItemNovelty;
 import greymerk.roguelike.worldgen.Coord;
 import greymerk.roguelike.worldgen.IWorldEditor;
+import greymerk.roguelike.worldgen.VanillaStructure;
 import greymerk.roguelike.worldgen.WorldEditor;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -51,6 +52,31 @@ public class CommandSpawnDungeon extends CommandBase
 		
 		if(!ap.hasEntry(0)){
 			sender.sendMessage(new TextComponentString(TextFormat.apply("Usage: roguelike [dungeon | give | config | settings]", TextFormat.GRAY)));
+			return;
+		}
+		
+		if(ap.match(0, "structure")){
+			String name = ap.hasEntry(1) ? ap.get(1) : VanillaStructure.getName(VanillaStructure.STRONGHOLD);			
+			World world = sender.getEntityWorld();
+			
+			IWorldEditor editor = new WorldEditor(world);
+			
+			VanillaStructure type = VanillaStructure.getType(name);
+			if(type == null){
+				sender.sendMessage(new TextComponentString(TextFormat.apply(name + " type name invalid", TextFormat.RED)));
+				return;
+			}
+			
+			Coord here = new Coord(sender.getPosition());
+			Coord structure = editor.findNearestStructure(type, here);
+			
+			if(structure == null){
+				sender.sendMessage(new TextComponentString(TextFormat.apply(name + " not found", TextFormat.RED)));
+				return;
+			}
+			
+			sender.sendMessage(new TextComponentString(TextFormat.apply("Nearest " + name + ": " + structure.toString(), TextFormat.GOLD)));
+			sender.sendMessage(new TextComponentString(TextFormat.apply("Distance: " + here.distance(structure), TextFormat.GOLD)));
 			return;
 		}
 		
